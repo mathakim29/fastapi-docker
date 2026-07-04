@@ -1,2 +1,3 @@
-# test
-# test
+- simple fastapi + docker + torch boilerplate docker/podman image so i can use later 
+- whats included is fastapi crud with postgresql with torch installed (nvidia built in)
+- it's not meant to be an image or wtv, just a template i save on github for future use
