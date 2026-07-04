@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  pytorch-gpu:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pytorch2
+    volumes:
+      - .:/workspace
+      - ./app:/app
+      - ./cache:/root/.cache
+
+    ports:
+      - 8000:8001
+    # Keep container alive and allow interactivity:
+    # stdin_open: true
+    # tty: true
+    # This block is critical for NVIDIA GPU access:
+    environment:
+      - HF_HOME=/root/.cache/huggingface
+      - TORCH_HOME=/root/.cache/torch
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  postgres:
+      image: postgres:16
+      container_name: postgres_db
+      restart: unless-stopped
+      environment:
+        POSTGRES_USER: myuser
+        POSTGRES_PASSWORD: mypassword
+        POSTGRES_DB: mydatabase
+      ports:
+        - 5432:5432
+      volumes:
+        - ./pgdata:/var/lib/postgresql/data
+
+# DATABASE_URL = "postgresql+psycopg://postgres:password@localhost/mydb"
